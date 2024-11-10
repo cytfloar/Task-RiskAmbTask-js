@@ -1,20 +1,26 @@
 import { ScreenCenterText } from "./Screens/ScreenCenterText.js";
 import { ScreenPBar } from "./Screens/ScreenPBar.js";
 
-//Order Gain and Loss block
-var participantid = localStorage.getItem("participant");
-let observer = participantid.match(/(\d+)/)[0]
-var lastDigit = observer %10
 var lossStartDigits = [1,2,5,6,9];
 //ITIs
 var iti = await fetch("./ITIs_norm5SD75.json");
 const ITIs = (await iti.json())["ITIs_norm5SD75"];
+
+
+function getObserver() {
+    var participantid = localStorage.getItem("participant");
+    let observer = participantid.match(/(\d+)/);
+    return observer.length > 0 ? observer[0] : null;
+}
 
 function generateScreens({
     numberTop = "$10",
     numberBottom = "$0",
     timer = 1
 }) {
+    //Order Gain and Loss block
+    let observer = getObserver();
+    var lastDigit = observer%10;
     var screens = [];
     screens.push(new ScreenCenterText({
         textName: "\u{2022}",
