@@ -62,12 +62,13 @@ class PBar extends VGroup {
     }, styleOptions) {
         var elements = [];
         elements.push(new Text(numberTop, {}, {
-            fontSize: "70px",
+            fontSize: "60px",
             textAlign: "center",
             color: "white",
             width: "100%",
             display: "block",
-            fontFamily: "Arial"
+            fontFamily: "Arial",
+            minWidth: "125px"
         }));
 
         let largeBox = new Box({
@@ -78,14 +79,14 @@ class PBar extends VGroup {
         elements.push(largeBox);
 
         elements.push(new Text(numberBottom, {}, {
-            fontSize: "70px",
+            fontSize: "60px",
             textAlign: "center",
             color: "white",
             width: "100%",
             display: "block",
             fontFamily: "Arial"
         }));
-        console.log(elements);
+        // console.log(elements);
         super(elements, {}, styleOptions);
     }
 

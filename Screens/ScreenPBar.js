@@ -7,7 +7,6 @@ import { PBar } from "../utils/PBar.js";
 class ScreenPBar extends Screen {
     constructor({
         reverse = false,
-        lossStart = false,
         barOptions,
         timer,
         refText = "$5"
@@ -17,7 +16,6 @@ class ScreenPBar extends Screen {
         this.reverse = reverse;
         this.barOptions = barOptions;
         this.timer = timer;
-        this.lossStart = lossStart;
         this.refText = refText;
     }
 
@@ -30,7 +28,6 @@ class ScreenPBar extends Screen {
             boxBottom: this.barOptions.boxBottom || 25,
         });
 
-        if (this.lossStart) this.refText = "-$5";
         let groupItems = [
             bar,
             new Text("or", {}, {

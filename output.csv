@@ -1,0 +1,2 @@
+observer,date,refSide,trialNum, vals, probs, ambigs, colors, ITIs, redValue, blueValue, trialStartTime, respStartTime, feedbackStartTime, ITIStartTime, trialEndTime, choice, rt, bagNumber 
+1210,20241110,1,1,66,.75,1, 5, 111, 0, 6.5, 1, 2.1423, 4

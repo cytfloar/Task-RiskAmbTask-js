@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>RiskAmbTask</title>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+            }
+            
+            body {
+                background: rgb(0, 0, 0);
+                overflow: hidden;
+            }
+
+            :not(:root):fullscreen::backdrop {
+                background: rgb(0, 0, 0);
+            }
+
+            #container { /* id: container */
+                height: 100%;
+                width: 100%;
+            }
+
+            .zero-width {
+                width: 0%;
+            }
+
+            .full-width {
+                width: 100%;
+            }
+
+            table td {
+                border-bottom: 2px white;
+                border-left: 2px white;
+                border-right: 2px white;
+            }
+
+            th, td {
+                padding: 0;
+            }
+
+            table {
+                border-spacing: 0;
+            }
+
+            .center {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+            }
+
+            label {
+                display: table;
+                font-size: 30px;
+                margin-top: 20px;
+                margin-bottom: 10px;
+                color: white;
+                font-family: "Arial";
+            }
+
+            input {
+                margin-bottom: 10px;
+                width: 270px;
+                height: 40px;
+                font-size: 30px;
+            }
+
+            input[name="date"] {
+                font-size: 18px;
+            }
+        </style>
+    </head>
+    <body onload="document.forms[0].date.value = new Date().toLocaleString('sv').replace(' ', 'T').slice(0, -3);">
+        <div id="container">
+            <div style="user-select: none; color: white; font-family: 'Arial'; font-size: 50px;" onclick="javascript:document.querySelector('body').requestFullscreen();">Full Screen</div>
+            <div class="center">
+            <form id="information" name="information">
+                <label for="participant">Participant (practice)</label>
+                <input type="text" id="participant" name="participant" />
+                <br>
+                <label for="group">Group</label>
+                <input type="text" id="group" name="group" />
+                <br>
+                <label for="session">Session</label>
+                <input type="text" id="session" name="session" />
+                <br>
+                <label for="date">Date</label>
+                <input type="datetime-local" id="date" name="date"/>
+                <br>
+                <input type="submit" value="Continue" style="margin-top: 30px; background-color:#ADD8E6; color: black"/>
+            </form>
+            </div>
+        </div>
+    </body>
+    <script type="module" src="practice.js"></script>
+</html>
+

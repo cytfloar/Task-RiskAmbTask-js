@@ -1,7 +1,6 @@
 import { ScreenCenterText } from "./Screens/ScreenCenterText.js";
 import { ScreenPBar } from "./Screens/ScreenPBar.js";
-import { Data } from "./utils/Parameters.js";
-import { DataRow } from './DataRow.js';
+import { DataRow } from "./DataRow.js";
 
 function downloadBlob(content, filename, contentType) {
     // Create a blob
@@ -14,6 +13,15 @@ function downloadBlob(content, filename, contentType) {
     pom.setAttribute('download', filename);
     pom.click();
   }
+
+var Data = {
+    // vals: [5, 16, 19, 111, 72, 9],
+    vals: [111, 16, 19, 111, 72, 9],
+    probs: [.5, .5, .25, .5, .25, .5],
+    ambigs: [0, .24, 0, .74, 0, .24],
+    ITIs: [8, 4, 8, 6, 4, 8],
+    colors: [2, 1, 2, 1, 2, 2]
+}
 
 var lossStartDigits = [1,2,5,6,9];
 var dataRows = [];
@@ -44,7 +52,7 @@ function generateScreens({
     }));
     screens.push(new ScreenPBar({
         reverse: observer % 2 === 0, //true:refSide=1 ($5 on the left);false: refSide=2(right)
-        refText: flip ^ lossStartDigits.includes(lastDigit) ? "-$5" : "$5",
+        refText: "$5",
         barOptions: {
             numberTop,
             numberBottom,
@@ -65,16 +73,16 @@ function generateScreens({
 
 async function main() {
     var csvOutput = "";
-    for (var blockNumber = 1; blockNumber < 5; ++ blockNumber) {
+    for (var blockNumber = 1; blockNumber < 2; ++ blockNumber) {
         //Block Num screen
         let blockIntroScreen = new ScreenCenterText({
-            textName: `Block ${blockNumber}`,
+            textName: `Block Practice`,
             keyName: ["a", "5"]
         });
         await blockIntroScreen.run();
         
         //Trials begin here
-        for (var trialNumber = 1; trialNumber < 32; ++ trialNumber) {
+        for (var trialNumber = 1; trialNumber < 7; ++ trialNumber) {
             let idx = (blockNumber - 1) * 31 + trialNumber - 1;
             let val = Data.vals[idx];
             let prob = Data.probs[idx];
