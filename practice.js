@@ -15,8 +15,7 @@ function downloadBlob(content, filename, contentType) {
   }
 
 var Data = {
-    // vals: [5, 16, 19, 111, 72, 9],
-    vals: [111, 16, 19, 111, 72, 9],
+    vals: [5, 16, 19, 111, 72, 9],
     probs: [.5, .5, .25, .5, .25, .5],
     ambigs: [0, .24, 0, .74, 0, .24],
     ITIs: [8, 4, 8, 6, 4, 8],
@@ -25,6 +24,7 @@ var Data = {
 
 var lossStartDigits = [1,2,5,6,9];
 var dataRows = [];
+var participantid = localStorage.getItem("participant");
 
 function getObserver() {
     var participantid = localStorage.getItem("participant");
@@ -153,20 +153,22 @@ async function main() {
             await presentChoiceScreen.run();
             trialEndTime = new Date();
             var bagNumber;
-
-            switch (ambig) {
-                case .24:
-                    bagNumber = 10;
-                    break;
-                case .5:
-                    bagNumber = 11;
-                    break;
-                case .74:
-                    bagNumber = 12;
-                    break;
-                default:
-                    bagNumber = prob == 0.5 ? 4 : ((color == 1) ^ (prob == 0.25) ? 5 : 3);
-            }
+            var lastDigit = getObserver() % 10;
+            var blockType = blockNumber>2 ^ lossStartDigits.includes(lastDigit) ? "loss": "gain";
+            if (blockType == "gain"){
+                switch (ambig) {
+                    case .24:
+                        bagNumber = 10;
+                        break;
+                    case .5:
+                        bagNumber = 11;
+                        break;
+                    case .74:
+                        bagNumber = 12;
+                        break;
+                    default:
+                        bagNumber = prob == 0.5 ? 4 : ((color == 1) ^ (prob == 0.25) ? 5 : 3);
+            }}
 
             var choiceType;
             var refSide = getObserver() % 2 === 0 ? 1 : 2;
@@ -180,6 +182,7 @@ async function main() {
             let resultRow = new DataRow({
                 refSide,
                 trialNum: idx + 1,
+                blockType,
                 val,
                 prob,
                 ambig,
@@ -203,7 +206,12 @@ async function main() {
             localStorage.setItem("lastrun", csvOutput);
         };
     }
-    downloadBlob(csvOutput, "data.csv", "text/csv;charset=utf-8;");
+    let endScreen = new ScreenCenterText({
+        textName: `Finished Practice!`,
+        timer: 2
+    });
+    await endScreen.run();
+    downloadBlob(csvOutput, "practice_"+participantid+"_"+Date()+".csv", "text/csv;charset=utf-8;");
 }
 
 document.forms[0].onsubmit = (e) => {

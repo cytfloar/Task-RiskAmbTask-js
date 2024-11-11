@@ -32,7 +32,6 @@ function generateScreens({
     timer = 1,
     flip = false
 }) {
-    //Order Gain and Loss block
     let observer = getObserver();
     var lastDigit = observer%10;
     var screens = [];
@@ -46,8 +45,8 @@ function generateScreens({
         reverse: observer % 2 === 0, //true:refSide=1 ($5 on the left);false: refSide=2(right)
         refText: flip ^ lossStartDigits.includes(lastDigit) ? "-$5" : "$5",
         barOptions: {
-            numberTop,
-            numberBottom,
+            numberTop: (flip ^ lossStartDigits.includes(lastDigit)) && numberTop != "$0" ? "-"+numberTop : numberTop,
+            numberBottom: (flip ^ lossStartDigits.includes(lastDigit)) && numberBottom != "$0" ? "-"+numberBottom : numberBottom,
             boxTop: boxTop * 100,
             boxBottom: boxBottom * 100
         },
@@ -72,7 +71,6 @@ async function main() {
             keyName: ["a", "5"]
         });
         await blockIntroScreen.run();
-        
         //Trials begin here
         for (var trialNumber = 1; trialNumber < 32; ++ trialNumber) {
             let idx = (blockNumber - 1) * 31 + trialNumber - 1;
@@ -145,20 +143,22 @@ async function main() {
             await presentChoiceScreen.run();
             trialEndTime = new Date();
             var bagNumber;
-
-            switch (ambig) {
-                case .24:
-                    bagNumber = 10;
-                    break;
-                case .5:
-                    bagNumber = 11;
-                    break;
-                case .74:
-                    bagNumber = 12;
-                    break;
-                default:
-                    bagNumber = prob == 0.5 ? 4 : ((color == 1) ^ (prob == 0.25) ? 5 : 3);
-            }
+            var lastDigit = getObserver() % 10;
+            var blockType = (blockNumber>2) ^ (lossStartDigits.includes(lastDigit)) ? "loss": "gain"
+            if (blockType == "gain"){
+                switch (ambig) {
+                    case .24:
+                        bagNumber = 10;
+                        break;
+                    case .5:
+                        bagNumber = 11;
+                        break;
+                    case .74:
+                        bagNumber = 12;
+                        break;
+                    default:
+                        bagNumber = prob == 0.5 ? 4 : ((color == 1) ^ (prob == 0.25) ? 5 : 3);
+            }}
 
             var choiceType;
             var refSide = getObserver() % 2 === 0 ? 1 : 2;
@@ -172,6 +172,7 @@ async function main() {
             let resultRow = new DataRow({
                 refSide,
                 trialNum: idx + 1,
+                blockType,
                 val,
                 prob,
                 ambig,
@@ -195,6 +196,11 @@ async function main() {
             localStorage.setItem("lastrun", csvOutput);
         };
     }
+    let endScreen = new ScreenCenterText({
+        textName: `Finished!`,
+        timer: 2
+    });
+    await endScreen.run();
     downloadBlob(csvOutput, "data.csv", "text/csv;charset=utf-8;");
 }
 
