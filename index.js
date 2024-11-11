@@ -192,7 +192,12 @@ async function main() {
             });
             dataRows.push(resultRow);
             if (csvOutput === "") csvOutput += Object.keys(resultRow.options).join(',') + "\n";
-            csvOutput += Object.values(resultRow.options).join(",") + "\n";
+            csvOutput += Object.values(resultRow.options).map(e => {
+                if (e instanceof Date) {
+                    return e.toLocaleString().replace(",", "");
+                }
+                return e;
+            }).join(",") + "\n";
             localStorage.setItem("lastrun", csvOutput);
         };
     }
@@ -201,7 +206,7 @@ async function main() {
         timer: 2
     });
     await endScreen.run();
-    downloadBlob(csvOutput, "data.csv", "text/csv;charset=utf-8;");
+    downloadBlob(csvOutput, "data"+localStorage.getItem("participant")+"_"+new Date().toLocaleDateString().replaceAll("/", "")+".csv", "text/csv;charset=utf-8;");
 }
 
 document.forms[0].onsubmit = (e) => {
@@ -210,5 +215,6 @@ document.forms[0].onsubmit = (e) => {
     var obj = Object.fromEntries(Array.from(formData.keys()).map(key => [key, formData.getAll(key).length > 1 ? formData.getAll(key) : formData.get(key)]));
     localStorage.setItem("participant", obj.participant);
     // console.log(localStorage.getItem("participant"));
+    document.querySelector('body').requestFullscreen();
     main();
 };

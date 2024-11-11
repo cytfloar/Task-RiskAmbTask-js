@@ -24,7 +24,6 @@ var Data = {
 
 var lossStartDigits = [1,2,5,6,9];
 var dataRows = [];
-var participantid = localStorage.getItem("participant");
 
 function getObserver() {
     var participantid = localStorage.getItem("participant");
@@ -153,22 +152,20 @@ async function main() {
             await presentChoiceScreen.run();
             trialEndTime = new Date();
             var bagNumber;
-            var lastDigit = getObserver() % 10;
-            var blockType = blockNumber>2 ^ lossStartDigits.includes(lastDigit) ? "loss": "gain";
-            if (blockType == "gain"){
-                switch (ambig) {
-                    case .24:
-                        bagNumber = 10;
-                        break;
-                    case .5:
-                        bagNumber = 11;
-                        break;
-                    case .74:
-                        bagNumber = 12;
-                        break;
-                    default:
-                        bagNumber = prob == 0.5 ? 4 : ((color == 1) ^ (prob == 0.25) ? 5 : 3);
-            }}
+
+            switch (ambig) {
+                case .24:
+                    bagNumber = 10;
+                    break;
+                case .5:
+                    bagNumber = 11;
+                    break;
+                case .74:
+                    bagNumber = 12;
+                    break;
+                default:
+                    bagNumber = prob == 0.5 ? 4 : ((color == 1) ^ (prob == 0.25) ? 5 : 3);
+            }
 
             var choiceType;
             var refSide = getObserver() % 2 === 0 ? 1 : 2;
@@ -202,7 +199,12 @@ async function main() {
             });
             dataRows.push(resultRow);
             if (csvOutput === "") csvOutput += Object.keys(resultRow.options).join(',') + "\n";
-            csvOutput += Object.values(resultRow.options).join(",") + "\n";
+            csvOutput += Object.values(resultRow.options).map(e => {
+                if (e instanceof Date) {
+                    return e.toLocaleString().replace(",", "");
+                }
+                return e;
+            }).join(",") + "\n";
             localStorage.setItem("lastrun", csvOutput);
         };
     }
@@ -211,7 +213,7 @@ async function main() {
         timer: 2
     });
     await endScreen.run();
-    downloadBlob(csvOutput, "practice_"+participantid+"_"+Date()+".csv", "text/csv;charset=utf-8;");
+    downloadBlob(csvOutput, "practice"+localStorage.getItem("participant")+"_"+new Date().toLocaleDateString().replaceAll("/", "")+".csv", "text/csv;charset=utf-8;");
 }
 
 document.forms[0].onsubmit = (e) => {
@@ -220,5 +222,6 @@ document.forms[0].onsubmit = (e) => {
     var obj = Object.fromEntries(Array.from(formData.keys()).map(key => [key, formData.getAll(key).length > 1 ? formData.getAll(key) : formData.get(key)]));
     localStorage.setItem("participant", obj.participant);
     // console.log(localStorage.getItem("participant"));
+    document.querySelector('body').requestFullscreen();
     main();
 };

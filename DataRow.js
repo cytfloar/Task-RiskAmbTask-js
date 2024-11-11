@@ -6,9 +6,9 @@ function getObserver() {
 
 class DataRow {
     constructor(options) {
+        options.observer = getObserver();
+        options.date = new Date();
         this.options = options;
-        this.options.observer = getObserver();
-        this.options.date = new Date();
     }
 }
 

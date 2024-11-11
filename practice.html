@@ -74,7 +74,7 @@
     </head>
     <body onload="document.forms[0].date.value = new Date().toLocaleString('sv').replace(' ', 'T').slice(0, -3);">
         <div id="container">
-            <div style="user-select: none; color: white; font-family: 'Arial'; font-size: 50px;" onclick="javascript:document.querySelector('body').requestFullscreen();">Full Screen</div>
+            <div style="user-select: none; color: white; font-family: 'Arial'; font-size: 40px;" onclick="javascript:downloadBlob(localStorage.getItem('lastrun'), 'data.csv', 'text/csv;charset=utf-8;');">Download last run</div>
             <div class="center">
             <form id="information" name="information">
                 <label for="participant">Participant (practice)</label>
