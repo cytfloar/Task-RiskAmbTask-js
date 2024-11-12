@@ -44,7 +44,7 @@ function generateScreens({
     }));
     screens.push(new ScreenPBar({
         reverse: observer % 2 === 0, //true:refSide=1 ($5 on the left);false: refSide=2(right)
-        refText: (flip ^ lossStartDigits.includes(lastDigit)) && (blockStart != "gain") ? "-$5" : "$5",
+        refText: (flip ^ lossStartDigits.includes(lastDigit)) && (blockStart != "gainonly") ? "-$5" : "$5",
         barOptions: {
             numberTop: (flip ^ lossStartDigits.includes(lastDigit)) && (numberTop != "$0") && (blockStart != "gain") ? "-"+numberTop : numberTop,
             numberBottom: (flip ^ lossStartDigits.includes(lastDigit)) && (numberBottom != "$0") && (blockStart != "gain") ? "-"+numberBottom : numberBottom,
@@ -146,7 +146,7 @@ async function main() {
             trialEndTime = new Date();
             var bagNumber;
             var lastDigit = getObserver() % 10;
-            var blockType = (blockStart == "gain") ? "gain": "loss"
+            var blockType = (blockStart == "gainonly") ? "gain": "loss"
             if (blockType == "gain"){
                 switch (ambig) {
                     case .24:
@@ -210,7 +210,7 @@ async function main() {
         timer: 2
     });
     await endScreen.run();
-    downloadBlob(csvOutput, "data"+localStorage.getItem("participant")+"_"+new Date().toLocaleDateString().replaceAll("/", "")+".csv", "text/csv;charset=utf-8;");
+    downloadBlob(csvOutput, "data"+localStorage.getItem("participant")+"_"+localStorage.getItem("gainorloss")+new Date().toLocaleDateString().replaceAll("/", "")+".csv", "text/csv;charset=utf-8;");
 }
 
 document.forms[0].onsubmit = (e) => {
