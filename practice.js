@@ -179,7 +179,6 @@ async function main() {
             let resultRow = new DataRow({
                 refSide,
                 trialNum: idx + 1,
-                blockType,
                 val,
                 prob,
                 ambig,

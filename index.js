@@ -21,7 +21,8 @@ var dataRows = [];
 function getObserver() {
     var participantid = localStorage.getItem("participant");
     let observer = participantid.match(/(\d+)/);
-    return observer.length > 0 ? observer[0] : null;
+    // return observer.length > 0 ? observer[0] : null;
+    return observer.length > 0 ? observer[0] : null
 }
 
 function generateScreens({
