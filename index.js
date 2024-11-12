@@ -25,15 +25,22 @@ function getObserver() {
     return observer.length > 0 ? observer[0] : null
 }
 
+function getExpInfo(){
+    var blockStart = localStorage.getItem("gainorloss");
+    return blockStart;
+}
+
 function generateScreens({
     numberTop = "$10",
     numberBottom = "$0",
     boxTop = .25,
     boxBottom = .25,
     timer = 1,
-    flip = false
+    flip = false //blockNum >2
 }) {
     let observer = getObserver();
+    var blockStart = getExpInfo();
+    console.log(blockStart)
     var lastDigit = observer%10;
     var screens = [];
     screens.push(new ScreenCenterText({
@@ -44,7 +51,7 @@ function generateScreens({
     }));
     screens.push(new ScreenPBar({
         reverse: observer % 2 === 0, //true:refSide=1 ($5 on the left);false: refSide=2(right)
-        refText: flip ^ lossStartDigits.includes(lastDigit) ? "-$5" : "$5",
+        refText: (flip ^ lossStartDigits.includes(lastDigit)) && (blockStart != "Gain Only") ? "-$5" : "$5",
         barOptions: {
             numberTop: (flip ^ lossStartDigits.includes(lastDigit)) && numberTop != "$0" ? "-"+numberTop : numberTop,
             numberBottom: (flip ^ lossStartDigits.includes(lastDigit)) && numberBottom != "$0" ? "-"+numberBottom : numberBottom,
@@ -109,7 +116,7 @@ async function main() {
                 boxTop,
                 boxBottom,
                 timer: ITI,
-                flip: blockNumber > 2
+                // flip: blockNumber > 2 
             });
 
             var ITIStartTime, trialStartTime, respStartTime, feedbackStartTime, trialEndTime;
@@ -145,7 +152,7 @@ async function main() {
             trialEndTime = new Date();
             var bagNumber;
             var lastDigit = getObserver() % 10;
-            var blockType = (blockNumber>2) ^ (lossStartDigits.includes(lastDigit)) ? "loss": "gain"
+            var blockType = (blockStart == "Gain Only") ? "gain": "loss"
             if (blockType == "gain"){
                 switch (ambig) {
                     case .24:
@@ -163,6 +170,7 @@ async function main() {
 
             var choiceType;
             var refSide = getObserver() % 2 === 0 ? 1 : 2;
+            var session = localStorage.getItem("session");
 
             if (choice) {
                 choiceType = (choice == 1) ^ (refSide == 1) ? "Lottery" : "Reference";
@@ -171,6 +179,7 @@ async function main() {
             }
 
             let resultRow = new DataRow({
+                session,
                 refSide,
                 trialNum: idx + 1,
                 blockType,

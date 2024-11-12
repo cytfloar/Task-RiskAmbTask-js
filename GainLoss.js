@@ -1,6 +1,7 @@
 import { ScreenCenterText } from "./Screens/ScreenCenterText.js";
 import { ScreenPBar } from "./Screens/ScreenPBar.js";
-import { DataRow } from "./DataRow.js";
+import { Data } from "./utils/Parameters.js";
+import { DataRow } from './DataRow.js';
 
 function downloadBlob(content, filename, contentType) {
     // Create a blob
@@ -14,21 +15,14 @@ function downloadBlob(content, filename, contentType) {
     pom.click();
   }
 
-var Data = {
-    vals: [5, 16, 19, 111, 72, 9],
-    probs: [.5, .5, .25, .5, .25, .5],
-    ambigs: [0, .24, 0, .74, 0, .24],
-    ITIs: [8, 4, 8, 6, 4, 8],
-    colors: [2, 1, 2, 1, 2, 2]
-}
-
 var lossStartDigits = [1,2,5,6,9];
 var dataRows = [];
 
 function getObserver() {
     var participantid = localStorage.getItem("participant");
     let observer = participantid.match(/(\d+)/);
-    return observer.length > 0 ? observer[0] : null;
+    // return observer.length > 0 ? observer[0] : null;
+    return observer.length > 0 ? observer[0] : null
 }
 
 function generateScreens({
@@ -39,7 +33,6 @@ function generateScreens({
     timer = 1,
     flip = false
 }) {
-    //Order Gain and Loss block
     let observer = getObserver();
     var lastDigit = observer%10;
     var screens = [];
@@ -51,10 +44,10 @@ function generateScreens({
     }));
     screens.push(new ScreenPBar({
         reverse: observer % 2 === 0, //true:refSide=1 ($5 on the left);false: refSide=2(right)
-        refText: "$5",
+        refText: flip ^ lossStartDigits.includes(lastDigit) ? "-$5" : "$5",
         barOptions: {
-            numberTop,
-            numberBottom,
+            numberTop: (flip ^ lossStartDigits.includes(lastDigit)) && numberTop != "$0" ? "-"+numberTop : numberTop,
+            numberBottom: (flip ^ lossStartDigits.includes(lastDigit)) && numberBottom != "$0" ? "-"+numberBottom : numberBottom,
             boxTop: boxTop * 100,
             boxBottom: boxBottom * 100
         },
@@ -72,16 +65,15 @@ function generateScreens({
 
 async function main() {
     var csvOutput = "";
-    for (var blockNumber = 1; blockNumber < 2; ++ blockNumber) {
+    for (var blockNumber = 1; blockNumber < 5; ++ blockNumber) {
         //Block Num screen
         let blockIntroScreen = new ScreenCenterText({
-            textName: `Block Practice`,
+            textName: `Block ${blockNumber}`,
             keyName: ["a", "5"]
         });
         await blockIntroScreen.run();
-        
         //Trials begin here
-        for (var trialNumber = 1; trialNumber < 7; ++ trialNumber) {
+        for (var trialNumber = 1; trialNumber < 32; ++ trialNumber) {
             let idx = (blockNumber - 1) * 31 + trialNumber - 1;
             let val = Data.vals[idx];
             let prob = Data.probs[idx];
@@ -152,24 +144,25 @@ async function main() {
             await presentChoiceScreen.run();
             trialEndTime = new Date();
             var bagNumber;
-
-            switch (ambig) {
-                case .24:
-                    bagNumber = 10;
-                    break;
-                case .5:
-                    bagNumber = 11;
-                    break;
-                case .74:
-                    bagNumber = 12;
-                    break;
-                default:
-                    bagNumber = prob == 0.5 ? 4 : ((color == 1) ^ (prob == 0.25) ? 5 : 3);
-            }
+            var lastDigit = getObserver() % 10;
+            var blockType = (blockNumber>2) ^ (lossStartDigits.includes(lastDigit)) ? "loss": "gain"
+            if (blockType == "gain"){
+                switch (ambig) {
+                    case .24:
+                        bagNumber = 10;
+                        break;
+                    case .5:
+                        bagNumber = 11;
+                        break;
+                    case .74:
+                        bagNumber = 12;
+                        break;
+                    default:
+                        bagNumber = prob == 0.5 ? 4 : ((color == 1) ^ (prob == 0.25) ? 5 : 3);
+            }}
 
             var choiceType;
             var refSide = getObserver() % 2 === 0 ? 1 : 2;
-            var session = localStorage.getItem("session");
 
             if (choice) {
                 choiceType = (choice == 1) ^ (refSide == 1) ? "Lottery" : "Reference";
@@ -178,9 +171,9 @@ async function main() {
             }
 
             let resultRow = new DataRow({
-                session,
                 refSide,
                 trialNum: idx + 1,
+                blockType,
                 val,
                 prob,
                 ambig,
@@ -210,11 +203,11 @@ async function main() {
         };
     }
     let endScreen = new ScreenCenterText({
-        textName: `Finished Practice!`,
+        textName: `Finished!`,
         timer: 2
     });
     await endScreen.run();
-    downloadBlob(csvOutput, "practice"+localStorage.getItem("participant")+"_"+new Date().toLocaleDateString().replaceAll("/", "")+".csv", "text/csv;charset=utf-8;");
+    downloadBlob(csvOutput, "data"+localStorage.getItem("participant")+"_"+new Date().toLocaleDateString().replaceAll("/", "")+".csv", "text/csv;charset=utf-8;");
 }
 
 document.forms[0].onsubmit = (e) => {
