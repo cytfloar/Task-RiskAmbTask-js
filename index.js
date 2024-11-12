@@ -21,13 +21,7 @@ var dataRows = [];
 function getObserver() {
     var participantid = localStorage.getItem("participant");
     let observer = participantid.match(/(\d+)/);
-    // return observer.length > 0 ? observer[0] : null;
-    return observer.length > 0 ? observer[0] : null
-}
-
-function getExpInfo(){
-    var blockStart = localStorage.getItem("gainorloss");
-    return blockStart;
+    return observer.length > 0 ? observer[0] : null;
 }
 
 function generateScreens({
@@ -39,8 +33,7 @@ function generateScreens({
     flip = false //blockNum >2
 }) {
     let observer = getObserver();
-    var blockStart = getExpInfo();
-    console.log(blockStart)
+    var blockStart = localStorage.getItem("gainorloss");
     var lastDigit = observer%10;
     var screens = [];
     screens.push(new ScreenCenterText({
@@ -51,10 +44,10 @@ function generateScreens({
     }));
     screens.push(new ScreenPBar({
         reverse: observer % 2 === 0, //true:refSide=1 ($5 on the left);false: refSide=2(right)
-        refText: (flip ^ lossStartDigits.includes(lastDigit)) && (blockStart != "Gain Only") ? "-$5" : "$5",
+        refText: (flip ^ lossStartDigits.includes(lastDigit)) && (blockStart != "gain") ? "-$5" : "$5",
         barOptions: {
-            numberTop: (flip ^ lossStartDigits.includes(lastDigit)) && numberTop != "$0" ? "-"+numberTop : numberTop,
-            numberBottom: (flip ^ lossStartDigits.includes(lastDigit)) && numberBottom != "$0" ? "-"+numberBottom : numberBottom,
+            numberTop: (flip ^ lossStartDigits.includes(lastDigit)) && (numberTop != "$0") && (blockStart != "gain") ? "-"+numberTop : numberTop,
+            numberBottom: (flip ^ lossStartDigits.includes(lastDigit)) && (numberBottom != "$0") && (blockStart != "gain") ? "-"+numberBottom : numberBottom,
             boxTop: boxTop * 100,
             boxBottom: boxBottom * 100
         },
@@ -92,6 +85,7 @@ async function main() {
             var numberBottom = "";
             var boxTop = 25;
             var boxBottom = 25;
+            var blockStart = localStorage.getItem("gainorloss");
 
             if (color == 1) { // blue
                 numberTop = `$${val}`;
@@ -152,7 +146,7 @@ async function main() {
             trialEndTime = new Date();
             var bagNumber;
             var lastDigit = getObserver() % 10;
-            var blockType = (blockStart == "Gain Only") ? "gain": "loss"
+            var blockType = (blockStart == "gain") ? "gain": "loss"
             if (blockType == "gain"){
                 switch (ambig) {
                     case .24:
@@ -224,6 +218,8 @@ document.forms[0].onsubmit = (e) => {
     var formData = new FormData(document.forms[0]);
     var obj = Object.fromEntries(Array.from(formData.keys()).map(key => [key, formData.getAll(key).length > 1 ? formData.getAll(key) : formData.get(key)]));
     localStorage.setItem("participant", obj.participant);
+    localStorage.setItem("session", obj.session);
+    localStorage.setItem("gainorloss", obj.gainorloss);
     // console.log(localStorage.getItem("participant"));
     document.querySelector('body').requestFullscreen();
     main();
