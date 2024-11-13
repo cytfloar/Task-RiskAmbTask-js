@@ -85,7 +85,6 @@ async function main() {
             var numberBottom = "";
             var boxTop = 25;
             var boxBottom = 25;
-            var blockStart = localStorage.getItem("gainorloss");
 
             if (color == 1) { // blue
                 numberTop = `$${val}`;
@@ -110,7 +109,7 @@ async function main() {
                 boxTop,
                 boxBottom,
                 timer: ITI,
-                // flip: blockNumber > 2 
+                flip: blockNumber > 2 
             });
 
             var ITIStartTime, trialStartTime, respStartTime, feedbackStartTime, trialEndTime;
@@ -146,7 +145,6 @@ async function main() {
             trialEndTime = new Date();
             var bagNumber;
             var lastDigit = getObserver() % 10;
-            var blockType = (blockStart == "gainonly") ? "gain": "loss"
             if (blockType == "gain"){
                 switch (ambig) {
                     case .24:
@@ -165,6 +163,8 @@ async function main() {
             var choiceType;
             var refSide = getObserver() % 2 === 0 ? 1 : 2;
             var session = localStorage.getItem("session");
+            var blockStart = localStorage.getItem("gainorloss");
+            var blockType = ((blockNumber>2) ^ lossStartDigits.includes(lastDigit)) && (blockStart != "gainonly") ? "loss" : "gain";
 
             if (choice) {
                 choiceType = (choice == 1) ^ (refSide == 1) ? "Lottery" : "Reference";
