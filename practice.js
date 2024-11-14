@@ -57,7 +57,7 @@ function generateScreens({
             boxTop: boxTop * 100,
             boxBottom: boxBottom * 100
         },
-        timer: 4 //lottery display duration is 4s
+        timer: 400 //lottery display duration is 4s
     }));
     screens.push(new ScreenCenterText({
         textName: "\u{2022}",

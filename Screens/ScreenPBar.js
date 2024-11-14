@@ -35,7 +35,7 @@ class ScreenPBar extends Screen {
                 color: "white",
                 justifyContent: "center",
                 alignItems: "center",
-                fontSize: "90px",
+                fontSize: "80px",
                 fontFamily: "Arial"
             }),
             new Text(this.refText, {}, {
@@ -43,7 +43,7 @@ class ScreenPBar extends Screen {
                 color: "white",
                 justifyContent: "center",
                 alignItems: "center",
-                fontSize: "100px",
+                fontSize: "110px",
                 fontFamily: "Arial"
             })
         ];

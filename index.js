@@ -46,8 +46,8 @@ function generateScreens({
         reverse: observer % 2 === 0, //true:refSide=1 ($5 on the left);false: refSide=2(right)
         refText: (flip ^ lossStartDigits.includes(lastDigit)) && (blockStart != "gainonly") ? "-$5" : "$5",
         barOptions: {
-            numberTop: (flip ^ lossStartDigits.includes(lastDigit)) && (numberTop != "$0") && (blockStart != "gain") ? "-"+numberTop : numberTop,
-            numberBottom: (flip ^ lossStartDigits.includes(lastDigit)) && (numberBottom != "$0") && (blockStart != "gain") ? "-"+numberBottom : numberBottom,
+            numberTop: (flip ^ lossStartDigits.includes(lastDigit)) && (numberTop != "$0") && (blockStart != "gainonly") ? "-"+numberTop : numberTop,
+            numberBottom: (flip ^ lossStartDigits.includes(lastDigit)) && (numberBottom != "$0") && (blockStart != "gainonly") ? "-"+numberBottom : numberBottom,
             boxTop: boxTop * 100,
             boxBottom: boxBottom * 100
         },

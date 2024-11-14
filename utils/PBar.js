@@ -10,7 +10,7 @@ class Box extends Base {
         super()
         let largeBox = document.createElement("div");
         largeBox.style.width = "100%";
-        largeBox.style.height = "25vh";
+        largeBox.style.height = "40vh";
         largeBox.style.backgroundColor = "grey";
         largeBox.style.display = "flex";
         largeBox.style.position = "relative";
@@ -62,13 +62,13 @@ class PBar extends VGroup {
     }, styleOptions) {
         var elements = [];
         elements.push(new Text(numberTop, {}, {
-            fontSize: "60px",
+            fontSize: "85px",
             textAlign: "center",
             color: "white",
             width: "100%",
             display: "block",
             fontFamily: "Arial",
-            minWidth: "125px"
+            minWidth: "200px"
         }));
 
         let largeBox = new Box({
@@ -79,7 +79,7 @@ class PBar extends VGroup {
         elements.push(largeBox);
 
         elements.push(new Text(numberBottom, {}, {
-            fontSize: "60px",
+            fontSize: "85px",
             textAlign: "center",
             color: "white",
             width: "100%",
