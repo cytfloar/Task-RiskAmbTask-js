@@ -143,6 +143,8 @@ async function main() {
             feedbackStartTime = new Date();
             await presentChoiceScreen.run();
             trialEndTime = new Date();
+
+            //assign bag numbers 
             var bagNumber;
             var lastDigit = getObserver() % 10;
             if (blockType == "gain"){

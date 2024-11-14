@@ -22,7 +22,6 @@ var Data = {
     colors: [2, 1, 2, 1, 2, 2]
 }
 
-var lossStartDigits = [1,2,5,6,9];
 var dataRows = [];
 
 function getObserver() {
@@ -222,7 +221,7 @@ document.forms[0].onsubmit = (e) => {
     var formData = new FormData(document.forms[0]);
     var obj = Object.fromEntries(Array.from(formData.keys()).map(key => [key, formData.getAll(key).length > 1 ? formData.getAll(key) : formData.get(key)]));
     localStorage.setItem("participant", obj.participant);
-    // console.log(localStorage.getItem("participant"));
+    localStorage.setItem("session", obj.session);
     document.querySelector('body').requestFullscreen();
     main();
 };
