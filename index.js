@@ -42,12 +42,16 @@ function generateScreens({
         fontSize: "200px",
         timer: timer
     }));
+    var testRef = false;
+    if (blockStart == "gainonly") testRef = true;
+    else if (blockStart == "lossonly") testRef = false;
+    else testRef = (!lossStartDigits.includes(lastDigit)) ^ flip;
     screens.push(new ScreenPBar({
         reverse: observer % 2 === 0, //true:refSide=1 ($5 on the left);false: refSide=2(right)
-        refText: (flip ^ lossStartDigits.includes(lastDigit)) && (blockStart != "gainonly") ? "-$5" : "$5",
+        refText: testRef ? "$5" : "-$5",
         barOptions: {
-            numberTop: (flip ^ lossStartDigits.includes(lastDigit)) && (numberTop != "$0") && (blockStart != "gainonly") ? "-"+numberTop : numberTop,
-            numberBottom: (flip ^ lossStartDigits.includes(lastDigit)) && (numberBottom != "$0") && (blockStart != "gainonly") ? "-"+numberBottom : numberBottom,
+            numberTop: (numberTop != "$0") && !testRef ? "-"+numberTop : numberTop,
+            numberBottom: (numberBottom != "$0") && !testRef ? "-"+numberBottom : numberBottom,
             boxTop: boxTop * 100,
             boxBottom: boxBottom * 100
         },
@@ -109,7 +113,7 @@ async function main() {
                 boxTop,
                 boxBottom,
                 timer: ITI,
-                flip: blockNumber > 2 
+                flip: blockNumber > 4 
             });
 
             var ITIStartTime, trialStartTime, respStartTime, feedbackStartTime, trialEndTime;
